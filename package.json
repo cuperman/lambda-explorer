@@ -1,0 +1,23 @@
+{
+  "name": "lambda-explorer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "eslint .",
+    "build": "npm run build:clean && npm run build:package && npm run build:zip",
+    "build:clean": "rm -rf ./package/*",
+    "build:package": "mkdir -p ./package/lambda-explorer && cp -r ./src/* ./package.json ./package/lambda-explorer",
+    "build:zip": "pushd ./package/lambda-explorer  && zip -r ../lambda-explorer.zip * && popd",
+    "deploy": "npm run deploy:package && npm run deploy:create && npm run deploy:describe",
+    "deploy:package": "aws cloudformation package --template-file ./template.yml --s3-bucket cloudformation-packages --output-template-file ./package/template.yml",
+    "deploy:create": "aws cloudformation deploy --template-file ./package/template.yml --stack-name lambda-explorer --capabilities CAPABILITY_IAM",
+    "deploy:describe": "aws cloudformation describe-stacks --stack-name lambda-explorer",
+    "deploy:destroy": "aws cloudformation delete-stack --stack-name lambda-explorer"
+  },
+  "author": "Jeff Cooper",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^4.14.0"
+  }
+}

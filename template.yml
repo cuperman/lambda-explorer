@@ -1,0 +1,47 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Lambda Explorer API
+
+Outputs:
+
+  StackRegion:
+    Value: !Ref AWS::Region
+  ExploreApiGatewayAwsProxyArn:
+    Value: !GetAtt ExploreApiGatewayAwsProxy.Arn
+
+Resources:
+
+  ExploreApiGatewayAuthorizer:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: api_gateway/authorizer.handler
+      Runtime: nodejs6.10
+      CodeUri: ./package/lambda-explorer.zip
+
+  ExploreApiGatewayAwsProxy:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: api_gateway/aws_proxy.handler
+      Runtime: nodejs6.10
+      CodeUri: ./package/lambda-explorer.zip
+      Events:
+        PostApiGatewayAwsProxy:
+          Type: Api
+          Properties:
+            Method: POST
+            Path: /
+        GetApiGatewayAwsProxy:
+          Type: Api
+          Properties:
+            Method: GET
+            Path: /
+        PutApiGatewayAwsProxy:
+          Type: Api
+          Properties:
+            Method: PUT
+            Path: /
+        DeleteApiGatewayAwsProxy:
+          Type: Api
+          Properties:
+            Method: DELETE
+            Path: /
